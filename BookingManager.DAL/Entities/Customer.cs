@@ -25,5 +25,6 @@ namespace BookingManager.DAL.Entities
         public string? PhoneNumber { get; set; }
 
         public override string Role => "Customer";
+        public List<Booking> Bookings { get; set; } = null!;
     }
 }

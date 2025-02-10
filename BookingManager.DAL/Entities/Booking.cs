@@ -21,5 +21,11 @@ namespace BookingManager.DAL.Entities
 
         public int RoomId { get; set; }
         public int CustomerId { get; set; }
+
+        [ForeignKey(nameof(RoomId))]
+        public Room Room { get; set; } = null!;
+
+        [ForeignKey(nameof(CustomerId))]
+        public Customer Customer { get; set; } = null!;
     }
 }

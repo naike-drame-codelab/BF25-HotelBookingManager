@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingManager.DAL.Migrations
 {
     [DbContext(typeof(HotelContext))]
-    [Migration("20250206145648_InitDatabase")]
-    partial class InitDatabase
+    [Migration("20250210084430_InitDb")]
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,6 +58,10 @@ namespace BookingManager.DAL.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("BookingId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("RoomId");
 
                     b.ToTable("Booking");
                 });
@@ -118,7 +122,8 @@ namespace BookingManager.DAL.Migrations
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(max)")
+                        .HasColumnName("image");
 
                     b.Property<int>("MaxCapacity")
                         .HasColumnType("int");
@@ -135,7 +140,7 @@ namespace BookingManager.DAL.Migrations
 
                     b.HasKey("RoomId");
 
-                    b.ToTable("Room");
+                    b.ToTable("Room", (string)null);
                 });
 
             modelBuilder.Entity("OptionRoom", b =>
@@ -179,6 +184,25 @@ namespace BookingManager.DAL.Migrations
                     b.ToTable("Customer");
                 });
 
+            modelBuilder.Entity("BookingManager.DAL.Entities.Booking", b =>
+                {
+                    b.HasOne("BookingManager.DAL.Entities.Customer", "Customer")
+                        .WithMany("Bookings")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BookingManager.DAL.Entities.Room", "Room")
+                        .WithMany("Bookings")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Room");
+                });
+
             modelBuilder.Entity("OptionRoom", b =>
                 {
                     b.HasOne("BookingManager.DAL.Entities.Option", null)
@@ -201,6 +225,16 @@ namespace BookingManager.DAL.Migrations
                         .HasForeignKey("BookingManager.DAL.Entities.Customer", "LoginId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BookingManager.DAL.Entities.Room", b =>
+                {
+                    b.Navigation("Bookings");
+                });
+
+            modelBuilder.Entity("BookingManager.DAL.Entities.Customer", b =>
+                {
+                    b.Navigation("Bookings");
                 });
 #pragma warning restore 612, 618
         }
