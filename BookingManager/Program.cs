@@ -4,7 +4,7 @@ using BookingManager.DAL.Entities;
 using BookingManager.DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-#region Ancienne version
+#region Async 
 //using HotelContext ctx = new HotelContext();
 
 //// ajouter une nouvelle donnée
