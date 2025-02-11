@@ -2,22 +2,39 @@
 using BookingManager.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 
-// using : permet de fermer ma connexion, car context = IDisposable
-using HotelContext ctx = new HotelContext();
+/*----- Multi Threading & tâches asynchrones -----*/
 
-// chaque élément est traqué et après chaque .SaveChanges(), j'update la db
-Customer customer = ctx.Customers.Find(1) ?? throw new Exception();
-customer.LastName = "Ly";
-ctx.SaveChanges();
+// Rmq :  un async a été mis automatiquement sur main() après l'ajout de notre await t;
 
-Customer customer2 = ctx.Customers.ToList()[3];
-customer2.LastName = "Person";
-ctx.SaveChanges();
+// permet de forcer l'arrêt d'un thread
+CancellationTokenSource tokenSrc = new ();
 
-// parfois je veux consulter une liste en lecture seule sans la traquer
-// le tracking prends du temps et de la mémoire
-// si je veux simplement afficher les éléments chargés et non les modifier --> .AsNoTracking()
-// améliore les performances, plus rapide
-Customer customer3 = ctx.Customers.AsNoTracking().ToList()[3];
-customer3.LastName = "Morre";
-ctx.SaveChanges();
+// démarrer une action en arrière-plan
+// un Task est similaire à une Promesse en js mais on décide si elle doit attendre
+Task t = Task.Run(() =>
+{
+    // s'exécute sur un thread différent du thread principal
+    for (int i = 0; i < 10000000; i++)
+    {
+        Console.WriteLine(i);
+        if (tokenSrc.Token.IsCancellationRequested) break;
+    }
+}, tokenSrc.Token);
+
+// va annuler le thread en pressant espace et passer su le thread principal
+ConsoleKey key = Console.ReadKey().Key;
+if(key == ConsoleKey.Spacebar)
+{
+    tokenSrc.Cancel();
+}
+
+// await : exécution asynchrone, t va être annulée et va lancer le thread principal
+// en LINQ, async = méthodes renvoient des Tasks
+// si pas await t; et si on presse une key autre que espace : exécute les 2 threads en même temps
+await t;
+
+// s'exécute sur le thread principal
+for (int i = 0;i < 20000000; i++)
+{
+    Console.WriteLine(i);
+}
