@@ -1,40 +1,44 @@
-﻿using BookingManager.DAL;
+﻿using BookingManager.Application.Abstractions;
+using BookingManager.DAL;
 using BookingManager.DAL.Entities;
+using BookingManager.DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-/*----- Multi Threading & tâches asynchrones -----*/
+#region Ancienne version
+//using HotelContext ctx = new HotelContext();
 
-// Rmq :  un async a été mis automatiquement sur main() après l'ajout de notre await t;
+//// ajouter une nouvelle donnée
+////await ctx.Options.AddAsync(new Option { Name = "Machine à laver" });
+////await ctx.SaveChangesAsync();
 
-// permet de forcer l'arrêt d'un thread
-CancellationTokenSource tokenSrc = new ();
+//// methode main() devient asynchrone si j'utilise await
+//// List<Booking> result = await ctx.Bookings.ToListAsync();
 
-// démarrer une action en arrière-plan
-// un Task est similaire à une Promesse en js mais on décide si elle doit attendre
-Task t = Task.Run(() =>
+//// retour sur le thread principal avec .Result
+////List<Booking> result = ctx.Bookings.ToListAsync().Result;
+
+//foreach (Option o in ctx.Options.ToList())
+//{
+//    Console.WriteLine(o.Name);
+//} 
+#endregion
+
+#region Application du Repository Design Pattern
+ICustomerRepository customerRepository = new CustomerRepository();
+IOptionRepository optionRepository = new OptionRepository();
+
+List<Customer> customers = customerRepository.GetAll();
+List<Option> options = optionRepository.GetAll();
+Option? option = optionRepository.GetById(4);
+optionRepository.Remove(option);
+
+
+foreach (Customer customer in customers)
 {
-    // s'exécute sur un thread différent du thread principal
-    for (int i = 0; i < 10000000; i++)
-    {
-        Console.WriteLine(i);
-        if (tokenSrc.Token.IsCancellationRequested) break;
-    }
-}, tokenSrc.Token);
-
-// va annuler le thread en pressant espace et passer su le thread principal
-ConsoleKey key = Console.ReadKey().Key;
-if(key == ConsoleKey.Spacebar)
-{
-    tokenSrc.Cancel();
+	Console.WriteLine(customer.LastName);
 }
+Console.WriteLine(option?.Name);
+Console.WriteLine(string.Join(", ", options.Select(o => o.Name)));
 
-// await : exécution asynchrone, t va être annulée et va lancer le thread principal
-// en LINQ, async = méthodes renvoient des Tasks
-// si pas await t; et si on presse une key autre que espace : exécute les 2 threads en même temps
-await t;
 
-// s'exécute sur le thread principal
-for (int i = 0;i < 20000000; i++)
-{
-    Console.WriteLine(i);
-}
+#endregion

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace BookingManager.DAL.Entities
 {
     [Table("Room")]
-    //[Index(nameof(ImageUrl), IsUnique = true)]
+    [Index(nameof(ImageUrl), IsUnique = true)]
     public class Room
     {
         public int RoomId { get; set; }
