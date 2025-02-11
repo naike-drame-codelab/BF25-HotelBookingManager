@@ -160,101 +160,261 @@ using HotelContext ctx = new HotelContext();
 
 #endregion
 
-#region Exercices
+
+#region Exercice -3
 // Afficher toutes les réservations faites en 2024
+// .Where() // .filter() in js
 List<Booking> bookings2024 = ctx.Bookings
     .Where(b => b.BookingDate.Year == 2024)
     .ToList();
 
-foreach (Booking book in bookings2024)
+// Alt : LINQ Query
+List<Booking> bookings2024Alt =
+    (from c in ctx.Bookings
+     where c.BookingDate.Year == 2024
+     select c)
+    .ToList();
+
+Console.WriteLine("----- Exercice -3 -----");
+foreach (Booking b in bookings2024)
 {
-    Console.WriteLine(book.BookingId);
+    Console.WriteLine($"{b.StartDate} {b.EndDate} {b.CustomerId} {b.RoomId}");
 }
 
+#endregion
+
+
+#region Exercice -2
 // Afficher toutes les personnes dont le nom commencent par "d"
 List<Customer> dGang = ctx.Customers
     .Where(c => c.LastName.StartsWith("d"))
     .ToList();
 
+List<Customer> dGangAlt = ctx.Customers
+    .Where(c => EF.Functions.Like(c.LastName, "d%"))
+    .ToList();
+
+Console.WriteLine("----- Exercice -2 -----");
 foreach (Customer c in dGang)
 {
-    Console.WriteLine(c.LastName);
+    Console.WriteLine($"{c.LastName} {c.FirstName}");
 }
 
+#endregion
+
+
+#region Exercice -1
 // Afficher toutes les chambres du 1er étage
 List<Room> firstFloorRooms = ctx.Rooms
     .Where(r => r.Floor == 1)
     .ToList();
 
-foreach(Room r in firstFloorRooms)
+Console.WriteLine("----- Exercice -1 -----");
+foreach (Room r in firstFloorRooms)
 {
-    Console.WriteLine(r.Number);
+    Console.WriteLine($"{r.Number} {r.Floor}");
 }
 
+#endregion
+
+
+#region Exercice 1
 // Trouver tous les clients (nom et prénom) qui ont réservé une chambre au mois de juin 2024.
-List<Customer> customers = ctx.Customers
-    .Where(c => c.Bookings.Any(d => d.BookingDate.Month == 6 && d.BookingDate.Year == 2024))
+// .Any() // .some() in js
+
+// tous les bookings de la db
+//bool bookingJune2024 = ctx.Bookings
+//    .Any(b => b.BookingDate.Month == 6 && b.BookingDate.Year == 2024);
+//Console.WriteLine(bookingJune2024); // True
+
+// les bookings de chaque customer
+// la jointure est seulement nécessaire si on a besoin d'afficher des infos sur la réservation
+/*
+SELECT c.*
+FROM Customer c
+WHERE (EXISTS(
+    SELECT * FROM Booking b 
+    WHERE b.CustomerId = c.LoginId 
+        AND YEAR(b.BookingDate) = 2024
+        AND MONTH(b.BookingDate) = 6
+))
+*/
+
+// si on veut la date de réservation : .Include() nécessaire
+/*
+SELECT c.*, b.*
+FROM Customer c
+JOIN Booking b ON c.LoginId = b.CustomerId
+WHERE (EXISTS(
+    SELECT * FROM Booking b 
+    WHERE b.CustomerId = c.LoginId 
+        AND YEAR(b.BookingDate) = 2024
+        AND MONTH(b.BookingDate) = 6
+))
+*/
+List<Customer> customersJune2024 = ctx.Customers
+    .Where(c => c.Bookings
+        .Any(d => d.BookingDate.Month == 6 && d.BookingDate.Year == 2024))
     .ToList();
 
-foreach (Customer c in customers)
+List<Customer> customersJune2024Alt = ctx.Bookings
+    .Include(b => b.Customer) // LEFT JOIN, pas nécessaire car on fait un .Select()
+    .Where(b => b.Customer != null) // si on veut un INNER JOIN
+    .Where(b => b.BookingDate.Year == 2024 && b.BookingDate.Month == 6)
+    .GroupBy(b => b.Customer)  // pour éviter les doublons
+    .Select(g => g.Key)
+    .ToList();
+
+Console.WriteLine("----- Exercice 1 -----");
+foreach (Customer c in customersJune2024)
 {
-    Console.Write(c.LastName + " ");
-    Console.WriteLine(c.FirstName);
+    Console.WriteLine($"{c.LastName} {c.FirstName}");
 }
 
+#endregion
+
+
+#region Exercice 2
 // Afficher le numéro et le prix de toutes les chambres avec l'option "Wifi gratuit".
+// si on veut des options supplémentaires, il faura une jointure
 List<Room> rooms = ctx.Rooms
-    .Where(r => r.Options.Any( o => o.Name == "Wifi gratuit"))
+    .Include(r => r.Options)
+    .Where(r => r.Options.Any(o => o.Name == "Wifi gratuit"))
     .ToList();
 
+Console.WriteLine("----- Exercice 2 -----");
 foreach (Room r in rooms)
 {
-    Console.WriteLine(r.Number);
+    // erreur si pas de Include() fait au moment de la requête
+    Console.WriteLine($"{r.Number} - {r.Price}€ - {string.Join(", ", r.Options.Select(o => o.Name))}");
 }
 
+#endregion
+
+
+#region Exercice 3
 // Combien de réservations ont été faites en mars 2024 ?
 int bookings = ctx.Bookings
     .Count(b => b.BookingDate.Month == 3 && b.BookingDate.Year == 2024);
-Console.WriteLine(bookings);
 
+Console.WriteLine("----- Exercice 3 -----");
+Console.WriteLine("Nombre de réservations faites en mars 2024 : " + bookings);
+
+#endregion
+
+
+#region Exercice 4
 // Trouver les noms et prénoms des clients qui ont réservé la chambre la plus chère.
+// 2 queries lancées au serveur
+Room mostExpensiveRoom = ctx.Rooms
+    .OrderByDescending(r => r.Price)
+    .First();
+
 List<Customer> richPeople = ctx.Customers
 .Where(c => c.Bookings
+    .Any(b => b.RoomId == mostExpensiveRoom.RoomId))
+.ToList();
+
+// 1! query >> essayer de faire le moins de queries possibles
+List<Customer> richPeopleAlt = ctx.Customers
+.Where(c => c.Bookings
     .Any(b => b.RoomId == ctx.Rooms
-    .OrderBy(r => r.Price)
-    .Last()
+    .OrderByDescending(r => r.Price)
+    .First()
     .RoomId))
 .ToList();
 
+Console.WriteLine("----- Exercice 4 -----");
 foreach (Customer c in richPeople)
 {
     Console.WriteLine($"{c.LastName} {c.FirstName}");
 }
 
+#endregion
+
+
+#region Exercice 5
 // Afficher les noms des options qui sont disponibles dans au moins deux chambres.
-//List<Option> options = ctx.Options
-//    .Where(o => o.Rooms
-//        .Any(o => o.RoomId == ctx.Rooms.OptionId))
-//    .ToList();
+List<Option> roomOptions = ctx.Options
+    .Include(o => o.Rooms) // o.Rooms = les chambres liées à l'option
+    .Where(o => o.Rooms.Count() >= 2)
+    .ToList();
 
-// Calculer le revenu total généré par chaque chambre en 2024 (somme des prix des réservations).
-
-
-// Afficher les chambres et leur options
-//List<Room> roomOptions = ctx.Rooms
-//    .Where(r => r.Options.Contains(o => o.RoomId))
-//    .ToList();
+Console.WriteLine("----- Exercice 5 -----");
+foreach (Option o in roomOptions)
+{
+    Console.WriteLine(o.Name);
+    foreach (Room r in o.Rooms)
+    {
+        Console.WriteLine(r.Number);
+    }
+    Console.WriteLine("--------------");
+}
 
 #endregion
 
-void DisplayList<T>(IEnumerable<T> list)
+
+#region Exercice 6
+// Calculer le revenu total généré par chaque chambre en 2024 (somme des prix des réservations).
+// .Select() // .map() in js
+/*
+var revenus = ctx.Bookings
+    .GroupBy(b => b.Room)  // 1) regrouper bookings par chambre et j'obtiens l'ensemble : KeyGrouping
+    .ToList();
+
+foreach (var item in revenus)
 {
-    foreach (T item in list)
+    Console.WriteLine(item.Key.Number); // item.Key = représente l'élément sur lequel j'ai groupé, ici la chambre
+    foreach (Booking r in item)
     {
-        Console.WriteLine(string.Join(", ",
-            typeof(T).GetProperties()
-            .Where(t => !t.PropertyType.IsGenericType)
-            .Select(p => $"{p.Name} : {p.GetValue(item)}")
-            ));
+        Console.WriteLine($"{r.CustomerId} {r.RoomId} {r.StartDate}");
     }
+    Console.WriteLine("----------------");
+}
+*/
+
+// on doit garder le var ici car c'est un objet anonyme qui comprend un Number et un Total
+// si on veut typer, il faut créer la class en question
+var totalRevenus = ctx.Bookings
+    .Where(b => b.BookingDate.Year == 2024)
+    .GroupBy(b => b.Room)  // 1) regrouper bookings par chambre et j'obtiens l'ensemble : KeyGrouping
+    .Select(g => new
+    {
+        Number = g.Key.Number,
+        // Total = g.Sum(r => r.Price - (r.Price * r.Discount / 100))
+        Total = g.Sum(r => r.Price * (1 - r.Discount / 100))
+    })
+    .ToList();
+
+Console.WriteLine("----- Exercice 6 -----");
+foreach (var item in totalRevenus)
+{
+    Console.WriteLine(item.Number);
+    Console.WriteLine(item.Total);
+    Console.WriteLine("---------------");
+}
+
+List<NumberTotal> totalRevenusAlt = ctx.Rooms
+    .Select(r => new NumberTotal
+    {
+        Number = r.Number,
+        Total = r.Bookings
+            .Where(b => b.BookingDate.Year == 2024)
+            .Sum(b => b.Price - (1 * b.Discount / 100))
+    })
+    .ToList();
+
+#endregion
+
+#region Exercice 7
+// Afficher les chambres et leur options
+
+
+#endregion
+
+class NumberTotal
+{
+    public string Number { get; set; } = null!;
+    public decimal Total { get; set; }
+
 }
