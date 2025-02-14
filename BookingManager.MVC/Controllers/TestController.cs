@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BookingManager.MVC.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using System.Net.Mail;
 
 namespace BookingManager.MVC.Controllers
 {
@@ -9,7 +12,9 @@ namespace BookingManager.MVC.Controllers
             return $"Hello {name}!!!";
         }
 
-        public string Pause()
+        //[Route("pause")]
+        [Route("[controller]/toto/{heure}")]
+        public ViewResult Pause([FromRoute] int id)
         {
             #region Solution proposée
             //DateTime time = DateTime.Now;
@@ -21,11 +26,44 @@ namespace BookingManager.MVC.Controllers
             #endregion
 
             #region Correction
-            int heurePause = 10;
-            if (DateTime.Now.Hour >= heurePause) return "Ce n'est pas encore l'heure de la pause";
-            int minutesRestantes = ((heurePause - DateTime.Now.Hour - 1) * 60) + (60 - DateTime.Now.Minute);
-            return $"Il reste {minutesRestantes} minutes avant la pause.";
+            //int heurePause = 12;
+            //if (heure >= heurePause) return View("Pause");
+            int minutesRestantes = ((id - DateTime.Now.Hour - 1) * 60) + (60 - DateTime.Now.Minute);
+            return View(minutesRestantes);
+            // return View("Pause", minutesRestantes);
             #endregion
+        }
+
+        // méthode pour afficher le formulaire
+        // [HttpGet]
+        public ViewResult Contact()
+        {
+            return View();
+        }
+
+        //méthode pour traiter le formulaire
+        // ViewResult & RedirectToAction héritent tous 2 de ActionResult
+        [HttpPost]
+        public IActionResult Contact([FromForm] ContactFormViewModel form)
+        {
+            if (ModelState.IsValid)
+            {
+                // faire un traitement pour envoyer un email
+                // redirection
+                var client = new SmtpClient("sandbox.smtp.mailtrap.io", 2525)
+                {
+                    Credentials = new NetworkCredential("199e72957c20c0", "f90a78cca99de2"),
+                    EnableSsl = true
+                };
+                client.Send("from@example.com", "to@example.com", "Hello world", "testbody");
+                
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                // sinon revenir à la vue
+                return View();
+            }
         }
     }
 }

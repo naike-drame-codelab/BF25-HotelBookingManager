@@ -1,0 +1,21 @@
+﻿@model ContactFormViewModel
+
+<form asp-controller="Test" asp-action="Contact" method="post">
+    <div class="mb-2">
+        <label for="email">Email du destinataire</label>
+        <input asp-for="Email" id="email" class="form-control" />
+        <span class="text-danger" asp-validation-for="Email"></span>
+    </div><div class="mb-2">
+        <label for=" subject">Sujet</label>
+        <input asp-for="Subject" id="subject" class="form-control" />
+        <span class="text-danger" asp-validation-for="Subject"></span>
+    </div>
+    <div class="mb-2">
+        <label for=" message">Message</label>
+        <textarea asp-for="Message" id="message" class="form-control"></textarea>
+        <span class="text-danger" asp-validation-for="Message"></span>
+    </div>
+    <div class="mb-2">
+        <button class="btn btn-dark">Envoyer</button>
+    </div>
+</form>
