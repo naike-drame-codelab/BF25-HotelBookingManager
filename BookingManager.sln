@@ -9,6 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookingManager.DAL", "Booki
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookingManager.Application", "BookingManager.Application\BookingManager.Application.csproj", "{ACEEF150-DD7F-49A2-A695-861BD215FFDB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Programs", "Programs", "{D807D9B0-D8F0-42FA-946D-A50F9B93C4FA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{9426B1EB-11E2-4315-BF5A-9FA966D7867E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookingManager.MVC", "BookingManager.MVC\BookingManager.MVC.csproj", "{8969B63B-E659-4D3C-937E-58C05F7BC1F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,8 +33,18 @@ Global
 		{ACEEF150-DD7F-49A2-A695-861BD215FFDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACEEF150-DD7F-49A2-A695-861BD215FFDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ACEEF150-DD7F-49A2-A695-861BD215FFDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8969B63B-E659-4D3C-937E-58C05F7BC1F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8969B63B-E659-4D3C-937E-58C05F7BC1F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8969B63B-E659-4D3C-937E-58C05F7BC1F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8969B63B-E659-4D3C-937E-58C05F7BC1F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F6C0730D-15AB-4C2F-A0BC-89FCB14E384A} = {D807D9B0-D8F0-42FA-946D-A50F9B93C4FA}
+		{4108CED9-ABD1-4AA3-AA61-07074C24D92A} = {9426B1EB-11E2-4315-BF5A-9FA966D7867E}
+		{ACEEF150-DD7F-49A2-A695-861BD215FFDB} = {9426B1EB-11E2-4315-BF5A-9FA966D7867E}
+		{8969B63B-E659-4D3C-937E-58C05F7BC1F2} = {D807D9B0-D8F0-42FA-946D-A50F9B93C4FA}
 	EndGlobalSection
 EndGlobal
