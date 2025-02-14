@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookingManager", "BookingManager\BookingManager.csproj", "{F6C0730D-15AB-4C2F-A0BC-89FCB14E384A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookingManager.DAL", "BookingManager.DAL\BookingManager.DAL.csproj", "{4108CED9-ABD1-4AA3-AA61-07074C24D92A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookingManager.Application", "BookingManager.Application\BookingManager.Application.csproj", "{ACEEF150-DD7F-49A2-A695-861BD215FFDB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{4108CED9-ABD1-4AA3-AA61-07074C24D92A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4108CED9-ABD1-4AA3-AA61-07074C24D92A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4108CED9-ABD1-4AA3-AA61-07074C24D92A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACEEF150-DD7F-49A2-A695-861BD215FFDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACEEF150-DD7F-49A2-A695-861BD215FFDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACEEF150-DD7F-49A2-A695-861BD215FFDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACEEF150-DD7F-49A2-A695-861BD215FFDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
