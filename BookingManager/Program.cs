@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 // using : permet de fermer ma connexion, car context = IDisposable
 using HotelContext ctx = new HotelContext();
 
-#region Demos
+#region Demos EF
 //// récupérer les données
 //// SELECT * FROM Room
 //List<Room> result = ctx.Rooms.ToList();
