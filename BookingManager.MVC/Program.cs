@@ -1,8 +1,16 @@
+using BookingManager.MVC.Configurations;
+
+// Config creation builder
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddSmtp(builder.Configuration);
+
+builder.Services.AddRepositories();
+
+// Config HTTP request
 var app = builder.Build();
 
 // Configure the HTTP request pipeline = middlewares.

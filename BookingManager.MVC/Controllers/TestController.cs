@@ -1,12 +1,22 @@
 ﻿using BookingManager.MVC.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using System.Net.Mail;
 
 namespace BookingManager.MVC.Controllers
 {
-    public class TestController : Controller
+    // injection via le primary constructor
+    public class TestController(SmtpClient smtpClient) : Controller
     {
+        #region Injection par constructeur
+        //private readonly SmtpClient _smtpClient;
+
+        //public TestController(SmtpClient client)
+        //{
+        //    _smtpClient = client;
+        //}
+
+        #endregion
+
         public string Hello([FromQuery] string name)
         {
             return $"Hello {name}!!!";
@@ -36,6 +46,7 @@ namespace BookingManager.MVC.Controllers
 
         // méthode pour afficher le formulaire
         // [HttpGet]
+
         public ViewResult Contact()
         {
             return View();
@@ -44,19 +55,25 @@ namespace BookingManager.MVC.Controllers
         //méthode pour traiter le formulaire
         // ViewResult & RedirectToAction héritent tous 2 de ActionResult
         [HttpPost]
-        public IActionResult Contact([FromForm] ContactFormViewModel form)
+        public IActionResult Contact(
+            [FromForm] ContactFormViewModel form)
+        #region Injection par méthode
+        // [FromServices] SmtpClient client
+
+        #endregion
         {
             if (ModelState.IsValid)
             {
                 // faire un traitement pour envoyer un email
+                MailMessage message = new();
+                message.Subject = form.Subject;
+                message.Body = form.Message;
+                message.From = new MailAddress("naike@DESKTOP-E563U3H");
+                message.To.Add(new MailAddress("naike.drame@gmail.com"));
+
+                smtpClient.Send(message);
+
                 // redirection
-                var client = new SmtpClient("sandbox.smtp.mailtrap.io", 2525)
-                {
-                    Credentials = new NetworkCredential("199e72957c20c0", "f90a78cca99de2"),
-                    EnableSsl = true
-                };
-                client.Send("from@example.com", "to@example.com", "Hello world", "testbody");
-                
                 return RedirectToAction("Index", "Home");
             }
             else

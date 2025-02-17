@@ -1,0 +1,27 @@
+﻿@model List<CustomerIndexViewModel>
+
+<h2>Liste des clients</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Email</th>
+            <th>Nombre de réservations</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customer in Model)
+        {
+            <tr>
+                <td>@customer.Id</td>
+                <td>@customer.FirstName</td>
+                <td>@customer.LastName</td>
+                <td>@customer.Email</td>
+                <td>@customer.BookingsNb</td>
+            </tr>
+        }
+    </tbody>
+</table>
