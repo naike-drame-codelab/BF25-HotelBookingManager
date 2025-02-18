@@ -12,5 +12,6 @@ namespace BookingManager.Application.Abstractions
         List<Customer> FindByKeyword(string? keyword);
         List<Customer> GetByYear(int year);
         Customer? GetByEmail(string email);
+        //void Create(string lastName, string firstName, string email, string? phoneNumber);
     }
 }

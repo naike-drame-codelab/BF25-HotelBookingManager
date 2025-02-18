@@ -1,4 +1,5 @@
-﻿using BookingManager.Application.Abstractions;
+﻿using System.Security.Cryptography;
+using BookingManager.Application.Abstractions;
 using BookingManager.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,6 +43,25 @@ namespace BookingManager.DAL.Repositories
                 .Where(c => c.Bookings
                     .Any(b => b.BookingDate.Year == year))
                 .ToList();
+        }
+
+        public override Customer Add(Customer c)
+        {
+            using HotelContext ctx = new HotelContext();
+            
+            Customer customer = new Customer
+            {
+                LastName = c.LastName,
+                FirstName = c.FirstName,
+                Email = c.Email,
+                PhoneNumber = c.PhoneNumber,
+                Username = c.Username,
+                Password = c.Password
+            };
+            ctx.Customers.Add(c);
+            ctx.SaveChanges();
+
+            return c;
         }
     }
 }
