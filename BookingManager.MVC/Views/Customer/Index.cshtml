@@ -1,27 +1,74 @@
-﻿@model List<CustomerIndexViewModel>
+﻿@model CustomerSearchFormViewModel
 
-<h2>Liste des clients</h2>
+@{
+    ViewData["Title"] = "Index";
+}
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>Email</th>
-            <th>Nombre de réservations</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var customer in Model)
-        {
+<h1>Liste des clients</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<div>
+    <form method="get">
+        <div class="form-group">
+            <input class="form-control" asp-for="Search" placeholder="Rechercher par nom, prénom ou email" />
+        </div>
+        <button class="btn btn-outline-secondary mt-3">Rechercher</button>
+    </form>
+</div>
+@if (Model.Results.Count > 0)
+{
+    <table class="table">
+        <thead>
             <tr>
-                <td>@customer.Id</td>
-                <td>@customer.FirstName</td>
-                <td>@customer.LastName</td>
-                <td>@customer.Email</td>
-                <td>@customer.BookingsNb</td>
+                <th>
+                    @Html.DisplayNameFor(model => model.Results.First().Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Results.First().LastName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Results.First().FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Results.First().Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Results.First().BookingsNb)
+                </th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Results)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LastName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BookingsNb)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+} else {
+    <p>Aucun résultat ne correspond à votre recherche.</p>
+}

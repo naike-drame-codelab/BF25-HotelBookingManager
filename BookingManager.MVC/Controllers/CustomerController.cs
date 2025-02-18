@@ -1,12 +1,14 @@
 ﻿using BookingManager.Application.Abstractions;
 using BookingManager.MVC.Mappers;
+using BookingManager.MVC.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookingManager.MVC.Controllers
 {
     public class CustomerController(ICustomerRepository repository) : Controller
     {
-        public IActionResult Index()
+        //FromQuery pour un GET, FromForm pour un POST
+        public IActionResult Index([FromQuery] CustomerSearchFormViewModel model)
         {
             #region Avant refactoring
             //List<Customer> customers = repository.GetAll();
@@ -16,11 +18,15 @@ namespace BookingManager.MVC.Controllers
             //    .ToList(); 
             #endregion
 
-            return View(repository
-                .GetAll()
-                .Select(ToViewModelMappers.ToCustomerIndex)
-                .ToList()
-                );
+            if (ModelState.IsValid)
+            {
+                model.Results = repository
+                    .FindByKeyword(model.Search)
+                    .Select(ToViewModelMappers.ToCustomerIndex)
+                    .ToList();
+                return View(model);
+            }
+            return View();
         }
     }
 }

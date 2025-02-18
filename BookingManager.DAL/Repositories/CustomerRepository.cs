@@ -13,6 +13,22 @@ namespace BookingManager.DAL.Repositories
             return ctx.Customers.Include(c => c.Bookings).ToList();
         }
 
+        // string? car potentiellement null / on ne met rien dans la barre de recherche
+        public List<Customer> FindByKeyword(string? keyword)
+        {
+            using HotelContext ctx = new HotelContext();
+
+            return ctx.Customers
+                .Include(c => c.Bookings)
+                .Where(c =>
+                keyword == null
+                || c.LastName.Contains(keyword)
+                || c.FirstName.Contains(keyword)
+                || c.Email.Contains(keyword)
+                )
+                .ToList();
+        }
+
         public Customer? GetByEmail(string email)
         {
             using HotelContext ctx = new HotelContext();
