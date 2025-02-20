@@ -7,14 +7,15 @@ using BookingManager.Application.Abstractions.Repositories;
 using BookingManager.Application.Abstractions.Business;
 using System.Data;
 using BookingManager.Application.Exceptions;
+using System.Reflection;
 
 namespace BookingManager.Application.Services
 {
     public class CustomerService(ICustomerRepository repository, SmtpClient smtpClient) : ICustomerService
     {
-        public List<Customer> GetAllCustomers()
+        public List<Customer> GetBySearch(string? search)
         {
-            return repository.GetAll();
+            return [.. repository.FindByKeyword(search)];
         }
 
         public Customer CreateCustomer(Customer c)
@@ -25,8 +26,6 @@ namespace BookingManager.Application.Services
             {
                 throw new DuplicateFieldException(c.Email, "Cet email existe déjà");
             }
-
-
             // créer un username
             c.Username = CreateUsername(c);
             // créer un password
@@ -68,6 +67,17 @@ namespace BookingManager.Application.Services
             };
             mail.To.Add(new MailAddress(c.Email));
             smtpClient.Send(mail);
+        }
+    
+        public void DeleteCustomer(int id)
+        {
+            Customer? c = repository.GetById(id);
+            if (c == null)
+            {
+                throw new Exception("Cet utilisateur n'existe pas.");
+            }
+
+            repository.Remove(c);
         }
     }
 }

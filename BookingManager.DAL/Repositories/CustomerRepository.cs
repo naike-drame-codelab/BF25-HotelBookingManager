@@ -4,12 +4,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookingManager.DAL.Repositories
 {
-    public class CustomerRepository(HotelContext ctx) : CrudRepositoryBase<Customer>(ctx), ICustomerRepository
+    public class CustomerRepository(HotelContext ctx): CrudRepositoryBase<Customer>(ctx), ICustomerRepository
     {
         // écrasement de la méthode de base de CrudRepository pour inclure une jointure avec la table Bookings
         public override List<Customer> GetAll()
         {
-            return ctx.Customers.Include(c => c.Bookings).ToList();
+            return ctx.Customers
+                .Where(c => c.Deleted == false)
+                .Include(c => c.Bookings)
+                .ToList();
         }
 
         // string? car potentiellement null / on ne met rien dans la barre de recherche
@@ -22,6 +25,7 @@ namespace BookingManager.DAL.Repositories
                 || c.LastName.Contains(keyword)
                 || c.FirstName.Contains(keyword)
                 || c.Email.Contains(keyword)
+                && c.Deleted == false
                 )
                 .ToList();
         }
@@ -37,6 +41,16 @@ namespace BookingManager.DAL.Repositories
                 .Where(c => c.Bookings
                     .Any(b => b.BookingDate.Year == year))
                 .ToList();
+        }
+
+        public override void Remove(Customer c)
+        {
+            Customer? cu = ctx.Customers.Find(c.LoginId);
+            cu.Deleted = true;
+            Console.WriteLine(cu.Deleted);
+            cu.PhoneNumber = null;
+            Console.WriteLine(cu.PhoneNumber);
+            ctx.SaveChanges();
         }
 
         public int CountByUsername(string prefix)

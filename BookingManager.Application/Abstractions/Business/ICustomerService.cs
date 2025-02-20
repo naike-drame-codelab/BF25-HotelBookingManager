@@ -9,7 +9,9 @@ namespace BookingManager.Application.Abstractions.Business
 {
     public interface ICustomerService
     {
-        public List<Customer> GetAllCustomers();
+        public List<Customer> GetBySearch(string? search);
         public Customer CreateCustomer(Customer c);
+
+        public void DeleteCustomer(int id);
     }
 }
