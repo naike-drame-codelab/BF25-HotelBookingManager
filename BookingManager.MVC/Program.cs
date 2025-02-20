@@ -10,6 +10,8 @@ builder.Services.AddSmtp(builder.Configuration);
 
 builder.Services.AddRepositories();
 
+builder.Services.AddServices();
+
 // Config HTTP request
 var app = builder.Build();
 

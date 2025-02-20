@@ -1,6 +1,8 @@
 ﻿using System.Net;
 using System.Net.Mail;
-using BookingManager.Application.Abstractions;
+using BookingManager.Application.Abstractions.Business;
+using BookingManager.Application.Abstractions.Repositories;
+using BookingManager.Application.Services;
 using BookingManager.DAL.Repositories;
 
 namespace BookingManager.MVC.Configurations
@@ -24,9 +26,14 @@ namespace BookingManager.MVC.Configurations
             });
         }
 
-        public static void AddRepositories( this IServiceCollection services)
+        public static void AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+        }
+
+        public static void AddServices(this IServiceCollection services)
+        {
+            services.AddScoped<ICustomerService, CustomerService>();
         }
     }
 }

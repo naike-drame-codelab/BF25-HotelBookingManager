@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BookingManager.DAL.Entities;
 
-namespace BookingManager.Application.Abstractions
+namespace BookingManager.Application.Abstractions.Repositories
 {
     public interface ICustomerRepository : ICrudRepository<Customer>
     {
