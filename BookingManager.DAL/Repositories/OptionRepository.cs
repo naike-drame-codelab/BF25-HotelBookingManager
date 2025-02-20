@@ -8,7 +8,7 @@ using BookingManager.DAL.Entities;
 
 namespace BookingManager.DAL.Repositories
 {
-    public class OptionRepository : CrudRepositoryBase<Option>, IOptionRepository
+    public class OptionRepository(HotelContext ctx) : CrudRepositoryBase<Option>(ctx), IOptionRepository
     {
       
     }

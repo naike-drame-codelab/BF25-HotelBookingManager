@@ -24,6 +24,8 @@ namespace BookingManager.DAL.Entities
         [Column(TypeName = "varchar(50)")]
         public string? PhoneNumber { get; set; }
 
+        public bool Deleted { get; set; } = false;
+
         public override string Role => "Customer";
         public List<Booking> Bookings { get; set; } = null!;
     }

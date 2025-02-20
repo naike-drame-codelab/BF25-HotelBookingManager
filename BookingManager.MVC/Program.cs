@@ -1,4 +1,6 @@
+using BookingManager.DAL;
 using BookingManager.MVC.Configurations;
+using Microsoft.EntityFrameworkCore;
 
 // Config creation builder
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSmtp(builder.Configuration);
+
+builder.Services.AddDbContext<HotelContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Main"));
+});
 
 builder.Services.AddRepositories();
 
