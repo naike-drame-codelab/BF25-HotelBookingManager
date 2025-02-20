@@ -12,7 +12,7 @@ namespace BookingManager.Application.Services
 {
     public class CustomerService(ICustomerRepository repository, SmtpClient smtpClient) : ICustomerService
     {
-        public List<Customer> GetAllCustomers()
+        public List<Customer> GetCustomers()
         {
             return repository.GetAll();
         }
@@ -25,6 +25,7 @@ namespace BookingManager.Application.Services
             {
                 throw new DuplicateFieldException(c.Email, "Cet email existe déjà");
             }
+
 
 
             // créer un username

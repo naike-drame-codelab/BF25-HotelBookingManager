@@ -69,7 +69,7 @@ namespace BookingManager.MVC.Controllers
                 // créer le nouveau customer
                 try
                 {
-                    customerService.CreateCustomer(ToViewModelMappers.ToCustomerCreate(form));
+                    customerService.CreateCustomer(ToEntityMappers.ToCustomerCreate(form));
                 }
                 catch (DuplicateFieldException ex)
                 {

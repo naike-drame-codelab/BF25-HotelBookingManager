@@ -15,16 +15,6 @@ namespace BookingManager.MVC.Mappers
                 entity.Bookings.Count()
              );
         }
-
-        public static Customer ToCustomerCreate(this CustomerCreateFormViewModel model)
-        {
-            return new Customer
-            {
-                LastName = model.LastName,
-                FirstName = model.FirstName,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-            };
-        }
+        
     }
 }
