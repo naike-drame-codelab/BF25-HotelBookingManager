@@ -63,7 +63,14 @@
                     <td>
                         @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
                         @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                        @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+                        <a 
+                            asp-controller="Customer" 
+                            asp-action="Delete" 
+                            asp-route-id="@item.Id"
+                            class="deleteLink"
+                        >
+                            X
+                        </a>
                     </td>
                 </tr>
             }
@@ -71,4 +78,21 @@
     </table>
 } else {
     <p>Aucun résultat ne correspond à votre recherche.</p>
+}
+
+@section Scripts{
+    <script>
+        const deleteLinks = document.querySelectorAll(".deleteLink");
+        for(let link of deleteLinks){
+            link.addEventListener("click", e => {
+                // annuler le comportement par défaut
+                e.preventDefault();
+                xdialog.confirm("Confirmer la suppression",  () => {
+                    //récupérer le lien sur lequel on a cliqué
+                    let l = e.target;
+                    window.loction.href = l.href;
+                });
+            })
+        }
+    </script>
 }

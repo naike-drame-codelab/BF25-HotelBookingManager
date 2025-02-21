@@ -9,6 +9,7 @@ using BookingManager.DAL.Entities;
 using BookingManager.MVC.Mappers;
 using BookingManager.MVC.Models;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol.Core.Types;
 
 namespace BookingManager.MVC.Controllers
 {
@@ -28,10 +29,10 @@ namespace BookingManager.MVC.Controllers
 
             if (ModelState.IsValid)
             {
-                model.Results = customerService.GetBySearch(model.Search).Select(ToViewModelMappers.ToCustomerIndex).ToList();
-                return View(model);
+                model.Results = customerService.FindByKeyword(model.Search)
+                   .Select(ToViewModelMappers.ToCustomerIndex).ToList();
             }
-            return View();
+            return View(model);
         }
 
         public IActionResult Create()
@@ -76,8 +77,15 @@ namespace BookingManager.MVC.Controllers
 
         public IActionResult Delete([FromRoute] int id)
         {
-            customerService.DeleteCustomer(id);
-            return RedirectToAction("Index");
+            try
+            {
+                customerService.DeleteCustomer(id);
+                return RedirectToAction("Index");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
         }
     }
 }

@@ -74,10 +74,20 @@ namespace BookingManager.Application.Services
             Customer? c = repository.GetById(id);
             if (c == null)
             {
-                throw new Exception("Cet utilisateur n'existe pas.");
+                throw new KeyNotFoundException("Cet utilisateur n'existe pas.");
             }
+            else
+            {
+                c.Deleted = true;
+                c.PhoneNumber = null;
+                repository.Update(c);
+            }
+        }
 
-            repository.Remove(c);
+        public IEnumerable<Customer> FindByKeyword(string? search)
+        {
+            return repository.FindByKeyword(search)
+                .Where(c => !c.Deleted); // skippe les Deleted qui sont à true
         }
     }
 }

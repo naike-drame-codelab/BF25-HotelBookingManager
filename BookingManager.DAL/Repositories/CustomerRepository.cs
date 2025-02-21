@@ -10,7 +10,6 @@ namespace BookingManager.DAL.Repositories
         public override List<Customer> GetAll()
         {
             return ctx.Customers
-                .Where(c => c.Deleted == false)
                 .Include(c => c.Bookings)
                 .ToList();
         }
@@ -25,7 +24,6 @@ namespace BookingManager.DAL.Repositories
                 || c.LastName.Contains(keyword)
                 || c.FirstName.Contains(keyword)
                 || c.Email.Contains(keyword)
-                && c.Deleted == false
                 )
                 .ToList();
         }
@@ -41,16 +39,6 @@ namespace BookingManager.DAL.Repositories
                 .Where(c => c.Bookings
                     .Any(b => b.BookingDate.Year == year))
                 .ToList();
-        }
-
-        public override void Remove(Customer c)
-        {
-            Customer? cu = ctx.Customers.Find(c.LoginId);
-            cu.Deleted = true;
-            Console.WriteLine(cu.Deleted);
-            cu.PhoneNumber = null;
-            Console.WriteLine(cu.PhoneNumber);
-            ctx.SaveChanges();
         }
 
         public int CountByUsername(string prefix)
