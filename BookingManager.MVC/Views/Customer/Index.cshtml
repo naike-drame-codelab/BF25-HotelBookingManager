@@ -62,7 +62,10 @@
                     </td>
                     <td>
                         @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                        <a href="@Url.Action("Details", "Customer", new { id = item.Id })">
+                            Details
+                        </a>
+                        |
                         <a 
                             asp-controller="Customer" 
                             asp-action="Delete" 
@@ -80,17 +83,18 @@
     <p>Aucun résultat ne correspond à votre recherche.</p>
 }
 
-@section Scripts{
+@section Scripts {
     <script>
-        const deleteLinks = document.querySelectorAll(".deleteLink");
-        for(let link of deleteLinks){
-            link.addEventListener("click", e => {
-                // annuler le comportement par défaut
+        const deleteLinks = document.querySelectorAll('.deleteLink');
+
+        for(let link of deleteLinks) {
+            link.addEventListener('click', e =>{
+                // annuler le comportement pas défaut
                 e.preventDefault();
-                xdialog.confirm("Confirmer la suppression",  () => {
-                    //récupérer le lien sur lequel on a cliqué
+                xdialog.confirm('Confirmer la suppression', () => {
+                    // recupérer le lien sur lequel on a cliqué
                     let l = e.target;
-                    window.loction.href = l.href;
+                    window.location.href = l.href;
                 });
             })
         }

@@ -35,6 +35,23 @@ namespace BookingManager.MVC.Controllers
             return View(model);
         }
 
+        [Route("Customer/Details/{id}")]
+        public IActionResult Details([FromRoute] int id)
+        {
+
+            //return View va bien sur la page et on voit bien l'url avec id mais pas les data
+            Customer? c = customerService.GetCustomer(id);
+            if (c == null)
+            {
+                throw new KeyNotFoundException();
+            }
+            else
+            {
+                CustomerIndexViewModel model = ToViewModelMappers.ToCustomerIndex(c);
+                return View(model);
+            }
+        }
+
         public IActionResult Create()
         {
             return View();
@@ -74,6 +91,47 @@ namespace BookingManager.MVC.Controllers
             TempData["success"] = "Enregistrement OK";
             return RedirectToAction("Index");
         }
+
+        public IActionResult Update()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Update(CustomerCreateFormViewModel form)
+        {
+
+            // vérifier si le formulaire est valide
+            if (!ModelState.IsValid)
+            // oui
+            {
+                // revenir sur le formulaire
+                return View();
+            }
+            // non 
+            // traiter les données
+            // mapper les données dans une entité
+            // créer le nouveau customer
+            try
+            {
+                customerService.CreateCustomer(ToEntityMappers.ToCustomerCreate(form));
+            }
+            catch (DuplicateFieldException ex)
+            {
+
+                ModelState.AddModelError(ex.FieldName, ex.Message);
+                return View();
+            }
+            catch (SmtpException)
+            {
+                TempData["error"] = "L'email n'a pas pu être envoyé";
+                return View();
+            }
+
+            TempData["success"] = "Enregistrement OK";
+            return RedirectToAction("Index");
+        }
+
 
         public IActionResult Delete([FromRoute] int id)
         {

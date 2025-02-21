@@ -68,7 +68,7 @@ namespace BookingManager.Application.Services
             mail.To.Add(new MailAddress(c.Email));
             smtpClient.Send(mail);
         }
-    
+
         public void DeleteCustomer(int id)
         {
             Customer? c = repository.GetById(id);
@@ -88,6 +88,33 @@ namespace BookingManager.Application.Services
         {
             return repository.FindByKeyword(search)
                 .Where(c => !c.Deleted); // skippe les Deleted qui sont à true
+        }
+
+        public Customer GetCustomer(int id)
+        {
+            Customer? c = repository.GetById(id);
+            if (c == null)
+            {
+                throw new KeyNotFoundException("Cet utilisateur n'existe pas.");
+            }
+            return c;
+        }
+
+        public Customer UpdateCustomer(Customer c)
+        {
+            // vérifier que l'email est unique avant de tenter l'insertion
+            Customer? cu = repository.GetById(c.LoginId);
+            if (cu != null)
+            {
+                throw new DuplicateFieldException(c.Email, "Cet utilisateur n'existe pas.");
+            }
+            else
+            {
+                using TransactionScope scope = new TransactionScope();
+                Customer result = repository.Update(c);
+                scope.Complete();
+                return result;
+            }
         }
     }
 }

@@ -15,5 +15,16 @@ namespace BookingManager.MVC.Mappers
                 entity.Bookings.Count()
              );
         }
+        //public static CustomerDetailsViewModel ToCustomerDetails(this Customer entity)
+        //{
+        //    return new CustomerDetailsViewModel(
+        //        entity.LoginId,
+        //        entity.FirstName,
+        //        entity.LastName,
+        //        entity.Email,
+        //        entity.PhoneNumber,
+        //        entity.Bookings.Count()
+        //     );
+        //}
     }
 }

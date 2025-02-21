@@ -14,6 +14,11 @@ namespace BookingManager.DAL.Repositories
                 .ToList();
         }
 
+        public override Customer? GetById(int id)
+        {
+            return base.GetById(id);
+        }
+
         // string? car potentiellement null / on ne met rien dans la barre de recherche
         public List<Customer> FindByKeyword(string? keyword)
         {
