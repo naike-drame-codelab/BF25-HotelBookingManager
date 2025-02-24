@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace BookingManager.MVC.Security
 {
@@ -7,9 +8,11 @@ namespace BookingManager.MVC.Security
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             string? role = context.HttpContext.Session.GetString("ROLE");
-            if(role != "Customer")
+            if(role != "Admin")
             {
+                context.HttpContext.Response.StatusCode = 403;
                 context.HttpContext.Response.Redirect("/Customer/Login");
+                // throw new BadHttpRequestException("", 403);
             }
         }
     }

@@ -133,10 +133,10 @@ namespace BookingManager.MVC.Controllers
             }
             try
             {
-                Customer customer = customerService.Login(model.UsernameOrEmail, model.Password);
-                //enregistrer le user en session
+                Login customer = customerService.Login(model.UsernameOrEmail, model.Password);
+                // enregistrer le user en session
                 HttpContext.Session.SetInt32("ID", customer.LoginId);
-                HttpContext.Session.SetString("EMAIL", customer.Email);
+                // HttpContext.Session.SetString("EMAIL", customer.Email);
                 HttpContext.Session.SetString("USERNAME", customer.Username);
                 HttpContext.Session.SetString("ROLE", customer.Role);
                 TempData["success"] = $"Bienvenue {customer.Username} !";

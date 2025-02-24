@@ -29,6 +29,7 @@ namespace BookingManager.MVC.Configurations
         public static void AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<ILoginRepository, LoginRepository>();
         }
 
         public static void AddServices(this IServiceCollection services)

@@ -15,6 +15,6 @@ namespace BookingManager.Application.Abstractions.Business
         public void DeleteCustomer(int id);
         IEnumerable<Customer> FindByKeyword(string? search);
         public Customer? GetCustomer(int id);
-        Customer Login(string usernameOrEmail, string password);
+        Login Login(string usernameOrEmail, string password);
     }
 }

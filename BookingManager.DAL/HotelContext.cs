@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using BookingManager.DAL.Configurations;
@@ -19,12 +20,12 @@ namespace BookingManager.DAL
 
         public HotelContext()
         {
-            
+
         }
 
-        public HotelContext(DbContextOptions options): base(options)
+        public HotelContext(DbContextOptions options) : base(options)
         {
-            
+
         }
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -35,6 +36,16 @@ namespace BookingManager.DAL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new RoomConfiguration());
+           
+            #if DEBUG
+            modelBuilder.Entity<Login>().HasData([
+                new Login {
+                    LoginId  = -1,
+                    Username = "admin",
+                    Password = SHA512.HashData(Encoding.UTF8.GetBytes("1234"))
+                }
+            ]);
+            #endif
         }
     }
 }

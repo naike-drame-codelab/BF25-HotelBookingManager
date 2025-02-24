@@ -12,7 +12,7 @@ using System.Security.Authentication;
 
 namespace BookingManager.Application.Services
 {
-    public class CustomerService(ICustomerRepository repository, SmtpClient smtpClient) : ICustomerService
+    public class CustomerService(ICustomerRepository repository, ILoginRepository loginRepository,SmtpClient smtpClient) : ICustomerService
     {
         public List<Customer> GetBySearch(string? search)
         {
@@ -126,14 +126,30 @@ namespace BookingManager.Application.Services
             repository.Update(cu);
         }
     
-        public Customer Login(string usernameOrEmail, string password)
+        public Login Login(string usernameOrEmail, string password)
         {
+            Login? login = loginRepository.GetByUsername(usernameOrEmail);
             Customer? customer = repository.FindOneByUsernameOrEmail(usernameOrEmail);
-            if(customer == null || !customer.Password.SequenceEqual(HashPassword(password, customer.Email)))
+
+            if(login == null && customer == null)
             {
                 throw new AuthenticationException();
             }
-            return customer;
+            if(customer != null)
+            {
+                if(customer.Password.SequenceEqual(HashPassword(password, customer.Email)))
+                {
+                    return customer;
+                }
+            }if(login != null)
+            {
+                if(login.Password.SequenceEqual(HashPassword(password, "")))
+                {
+                    return login;
+                }
+            }
+
+            throw new AuthenticationException();
         }
     }
 }
