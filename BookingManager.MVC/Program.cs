@@ -19,6 +19,16 @@ builder.Services.AddRepositories();
 
 builder.Services.AddServices();
 
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options => {
+    // combien de temps ma session subsiste sans activité = après x secondes/minutes/heures d'inactivité, je dois me reco
+    options.IdleTimeout = TimeSpan.FromHours(24);
+    options.Cookie.HttpOnly = true;
+    // si mon cookie n'a pas été set, mon app ne tourne plus
+    options.Cookie.IsEssential = true;
+});
+
 // Config HTTP request
 var app = builder.Build();
 
@@ -30,6 +40,8 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthorization();
 

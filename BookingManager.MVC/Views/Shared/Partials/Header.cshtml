@@ -7,7 +7,18 @@
         ("Test", "Contact", "Contactez-nous", null),
         ("Customer", "Index", "Voir les clients", null),
         ("Customer", "Create", "S'inscrire", null),
+        // ("Customer", "Login", "Se connecter", null),
     ];
+
+    if(Context.Session.GetInt32("ID") == null)
+    {
+        menuItems = [.. menuItems, ("Customer", "Login", "Se connecter", null)];
+    } else
+    {
+        menuItems = [.. menuItems, ("Customer", "Logout", "Se déconnecter", null)];
+    }
+
+    RouteData route = Context.GetRouteData();
 }
 
 <header>

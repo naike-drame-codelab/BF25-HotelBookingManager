@@ -1,9 +1,12 @@
 ﻿using System.Net.Mail;
+using System.Security.Authentication;
 using BookingManager.Application.Abstractions.Business;
 using BookingManager.Application.Exceptions;
 using BookingManager.DAL.Entities;
 using BookingManager.MVC.Mappers;
 using BookingManager.MVC.Models;
+using BookingManager.MVC.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookingManager.MVC.Controllers
@@ -22,6 +25,8 @@ namespace BookingManager.MVC.Controllers
             return View(model);
         }
 
+        // [Authorize(Roles = "Admin, Customer")]
+        [AuthorizeAdmin]
         public IActionResult Create()
         {
             return View();
@@ -110,6 +115,46 @@ namespace BookingManager.MVC.Controllers
             {
                 return NotFound();
             }
+        }
+
+        // afficher la page de login
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        // traiter la connexion
+        [HttpPost]
+        public IActionResult Login([FromForm] LoginFormViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+            try
+            {
+                Customer customer = customerService.Login(model.UsernameOrEmail, model.Password);
+                //enregistrer le user en session
+                HttpContext.Session.SetInt32("ID", customer.LoginId);
+                HttpContext.Session.SetString("EMAIL", customer.Email);
+                HttpContext.Session.SetString("USERNAME", customer.Username);
+                HttpContext.Session.SetString("ROLE", customer.Role);
+                TempData["success"] = $"Bienvenue {customer.Username} !";
+                //rediriger 
+                return RedirectToAction("Index", "Home");
+            }
+            catch (AuthenticationException)
+            {
+                // ajout dans le summary l'error et pas dans un champ particulier
+                ModelState.AddModelError("", "Votre username ou votre mot de passe n'est pas valide.");
+                return View();
+            }
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

@@ -8,6 +8,7 @@ using BookingManager.Application.Abstractions.Business;
 using System.Data;
 using BookingManager.Application.Exceptions;
 using System.Reflection;
+using System.Security.Authentication;
 
 namespace BookingManager.Application.Services
 {
@@ -123,6 +124,16 @@ namespace BookingManager.Application.Services
                 cu.Password = hash;
             }
             repository.Update(cu);
+        }
+    
+        public Customer Login(string usernameOrEmail, string password)
+        {
+            Customer? customer = repository.FindOneByUsernameOrEmail(usernameOrEmail);
+            if(customer == null || !customer.Password.SequenceEqual(HashPassword(password, customer.Email)))
+            {
+                throw new AuthenticationException();
+            }
+            return customer;
         }
     }
 }
