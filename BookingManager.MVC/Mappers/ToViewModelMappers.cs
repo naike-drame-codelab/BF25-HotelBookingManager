@@ -5,26 +5,26 @@ namespace BookingManager.MVC.Mappers
 {
     public static class ToViewModelMappers
     {
-        public static CustomerIndexViewModel ToCustomerIndex(this Customer entity)
+        public static CustomerIndexViewModel
+            ToCustomerIndex(this Customer entity)
         {
             return new CustomerIndexViewModel(
                 entity.LoginId,
-                entity.FirstName,
                 entity.LastName,
+                entity.FirstName,
                 entity.Email,
                 entity.Bookings.Count()
-             );
+            );
         }
-        //public static CustomerDetailsViewModel ToCustomerDetails(this Customer entity)
-        //{
-        //    return new CustomerDetailsViewModel(
-        //        entity.LoginId,
-        //        entity.FirstName,
-        //        entity.LastName,
-        //        entity.Email,
-        //        entity.PhoneNumber,
-        //        entity.Bookings.Count()
-        //     );
-        //}
+
+        public static CustomerEditFormViewModel ToCustomerEditForm(this Customer entity)
+        {
+            return new CustomerEditFormViewModel
+            {
+                LastName = entity.LastName,
+                FirstName = entity.FirstName,
+                PhoneNumber = entity.PhoneNumber,
+            };
+        }
     }
 }

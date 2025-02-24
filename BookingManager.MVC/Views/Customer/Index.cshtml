@@ -61,11 +61,8 @@
                         @Html.DisplayFor(modelItem => item.BookingsNb)
                     </td>
                     <td>
-                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                        <a href="@Url.Action("Details", "Customer", new { id = item.Id })">
-                            Details
-                        </a>
-                        |
+                        @Html.ActionLink("Editer", "Update", new { id = item.Id }) |
+                        
                         <a 
                             asp-controller="Customer" 
                             asp-action="Delete" 

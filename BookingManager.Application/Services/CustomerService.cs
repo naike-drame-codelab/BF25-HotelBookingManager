@@ -90,31 +90,39 @@ namespace BookingManager.Application.Services
                 .Where(c => !c.Deleted); // skippe les Deleted qui sont à true
         }
 
-        public Customer GetCustomer(int id)
+        public Customer? GetCustomer(int id)
         {
-            Customer? c = repository.GetById(id);
-            if (c == null)
+            // return repository.GetById(id)?.Deleted ?? true ? repository.GetById(id) : null;
+            Customer? customer = repository.GetById(id);
+            if (customer is not null && customer.Deleted)
             {
-                throw new KeyNotFoundException("Cet utilisateur n'existe pas.");
+                return null;
             }
-            return c;
+            return customer;
         }
 
-        public Customer UpdateCustomer(Customer c)
+        public void UpdateCustomer(int id, string lastName, string firstName, string? password, string? phoneNumber)
         {
-            // vérifier que l'email est unique avant de tenter l'insertion
-            Customer? cu = repository.GetById(c.LoginId);
-            if (cu != null)
+            Customer? cu = repository.GetById(id);
+            if (cu == null)
             {
-                throw new DuplicateFieldException(c.Email, "Cet utilisateur n'existe pas.");
+                throw new KeyNotFoundException();
             }
-            else
+            cu.LastName = lastName;
+            cu.FirstName = firstName;
+            cu.PhoneNumber = phoneNumber;
+
+            if (password != null)
             {
-                using TransactionScope scope = new TransactionScope();
-                Customer result = repository.Update(c);
-                scope.Complete();
-                return result;
+                byte[] hash = HashPassword(password, cu.Email);
+                // if (hash.SequenceEqual(cu.Password)) --> comparer 2 tableaux = comparer 2 refs donc on peut pas faire == comparaison
+                if (Encoding.UTF8.GetString(hash) == Encoding.UTF8.GetString(cu.Password))
+                {
+                    throw new DuplicateFieldException(nameof(cu.Password), "Le mot de passe doit être différent.");
+                }
+                cu.Password = hash;
             }
+            repository.Update(cu);
         }
     }
 }
