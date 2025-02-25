@@ -1,0 +1,12 @@
+@BookingManager.API_HostAddress = http://localhost:5135
+
+GET https://pokeapi.co/api/v2/pokemon
+Accept: application/json
+
+###
+
+GET {{BookingManager.API_HostAddress}}/Cat
+Accept: application/json
+
+###
+
